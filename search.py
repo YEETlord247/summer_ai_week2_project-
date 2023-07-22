@@ -12,6 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
+
 """
 In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
@@ -61,7 +62,6 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
-
 def tinyMazeSearch(problem):
     """
     Returns a sequence of moves that solves tinyMaze.  For any other maze, the
@@ -72,7 +72,25 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
-def depthFirstSearch(problem: SearchProblem):
+def traverse(fringe, problem):
+    def find_path(v):
+        path = []
+        for item in v:
+            path.append(item[1])
+        return path
+    fringe.push([(problem.getStartState(), None, 0)])
+    visited = set()
+    while not fringe.isEmpty():
+        v = fringe.pop()
+        if problem.isGoalState(v[-1][0]):
+            return find_path(v[1:])
+        if v[-1][0] not in visited:
+            visited.add(v[-1][0])
+            suc = problem.getSuccessors(v[-1][0])
+            for child in suc:
+                fringe.push(v + [(child[0], child[1], child[2] + v[-1][2])])
+
+def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
 
@@ -81,22 +99,28 @@ def depthFirstSearch(problem: SearchProblem):
 
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
-    """
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
-def breadthFirstSearch(problem: SearchProblem):
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    """
+    "*** YOUR CODE HERE ***"
+    fringe = util.Stack()
+    return traverse(fringe, problem)
+
+def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = util.Queue()
+    return traverse(fringe, problem)
 
-def uniformCostSearch(problem: SearchProblem):
+def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def func(item):
+        return item[-1][2]
+    fringe = util.PriorityQueueWithFunction(func)
+    return traverse(fringe, problem)
 
 def nullHeuristic(state, problem=None):
     """
@@ -105,11 +129,14 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
+def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
+    # util.raiseNotDefined()
+    def func(item):
+        return item[-1][2] + heuristic(item[-1][0], problem)
+    fringe = util.PriorityQueueWithFunction(func)
+    return traverse(fringe, problem)
 
 # Abbreviations
 bfs = breadthFirstSearch
