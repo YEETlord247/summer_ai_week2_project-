@@ -1,0 +1,5 @@
+The assignment was difficult, that's for sure. It was not as hard as the Social Network assignment, partly because the pseudocode was available on the slides. 
+
+That said, I encountered several difficulties with both BFS and DFS algorithms. Mostly, getting Pacman to move according to the search agents was the most frustrating.
+
+In all, I had enough time to work on Questions 3 and 4 as well, and fortunately, they all turned out to be accurate.
